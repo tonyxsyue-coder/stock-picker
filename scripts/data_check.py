@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def parse_args() -> argparse.Namespace:
     today = date.today()
     default_start = (today - timedelta(days=365)).strftime("%Y%m%d")
-    parser = argparse.ArgumentParser(description="检查 AkShare A 股历史行情数据源")
+    parser = argparse.ArgumentParser(description="检查 AkShare 东方财富 A 股历史行情数据源")
     parser.add_argument("--code", default="600519", help="A 股代码，默认 600519")
     parser.add_argument("--start-date", default=default_start, help="开始日期 YYYYMMDD")
     parser.add_argument("--end-date", default=today.strftime("%Y%m%d"), help="结束日期 YYYYMMDD")
@@ -57,7 +57,7 @@ def main() -> int:
     print(f"[区间] {args.start_date} 至 {args.end_date}；复权：{args.adjust or '不复权'}")
 
     try:
-        frame = ak.stock_zh_a_hist(
+        frame = ak.stock_zh_a_hist_em(
             symbol=code,
             period="daily",
             start_date=args.start_date,
