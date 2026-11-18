@@ -1,4 +1,4 @@
-# 🏛️ A股智能选股系统
+ # 🏛️ A股智能选股系统
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
