@@ -1,0 +1,56 @@
+name: A-share data source check
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "A-share stock code (6 digits)"
+        required: true
+        default: "600519"
+      start_date:
+        description: "Start date (YYYYMMDD)"
+        required: true
+        default: "20251119"
+      end_date:
+        description: "End date (YYYYMMDD)"
+        required: true
+        default: "20261119"
+
+permissions:
+  contents: read
+
+jobs:
+  data-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: data-source-integration
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install data-check dependencies
+        run: python -m pip install --upgrade pip "pandas>=2.0,<4.0" "akshare>=1.14,<2.0"
+
+      - name: Fetch A-share daily history
+        run: |
+          python scripts/data_check.py \
+            --code "${{ inputs.code }}" \
+            --start-date "${{ inputs.start_date }}" \
+            --end-date "${{ inputs.end_date }}" \
+            --adjust qfq
+
+      - name: Upload CSV result
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-share-data-${{ inputs.code }}
+          path: data/cache/data_check_${{ inputs.code }}_qfq.csv
+          if-no-files-found: error
+          retention-days: 7
